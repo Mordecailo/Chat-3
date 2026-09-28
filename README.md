@@ -1,8 +1,8 @@
-# Chat-3
+# Clean
 
-Тестовые страницы, выкладываемые на GitHub Pages.
+Статические страницы, выкладываемые на GitHub Pages.
 
-Адрес сайта: `https://mordecailo.github.io/Chat-3/` (после первого деплоя).
+Адрес сайта: `https://mordecailo.github.io/Clean/`
 
 ## Локальный запуск
 
