@@ -1,18 +1,115 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Тестовая страница</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; line-height: 1.6; }
-    h1 { color: #24292f; }
-    .ok { color: #1a7f37; font-weight: 600; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дней прошло</title>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --fg: #1d1d1f;
+    --muted: #86868b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #000000; --fg: #f5f5f7; --muted: #86868b; }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    color: var(--fg);
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .label {
+    font-size: clamp(12px, 1.6vw, 18px);
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .number {
+    font-size: clamp(120px, 34vw, 460px);
+    line-height: .88;
+    font-weight: 700;
+    letter-spacing: -.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .unit {
+    font-size: clamp(14px, 1.8vw, 22px);
+    color: var(--muted);
+    margin-top: 14px;
+  }
+  .since {
+    margin-top: 32px;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--muted);
+  }
+  .since b { color: var(--fg); font-weight: 600; }
+</style>
 </head>
 <body>
-  <h1>GitHub Pages работает</h1>
-  <p class="ok">Страница успешно задеплоена из git-репозитория.</p>
-  <p>Добавляй свои страницы и пуши в ветку <code>main</code> — они автоматически появятся по адресу этого сайта.</p>
+  <div class="label">Дней прошло</div>
+  <div class="number" id="days">…</div>
+  <div class="unit" id="unit"></div>
+  <div class="since">с <b id="since"></b></div>
+
+  <script>
+    /* =======================================================
+       ИЗМЕНИТЕ ТОЧКУ ОТСЧЁТА ЗДЕСЬ (формат ГГГГ-ММ-ДД)
+       ======================================================= */
+    const START_DATE = '2026-09-27';
+
+    function parseLocal(str) {
+      const [y, m, d] = str.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function plural(n, one, few, many) {
+      const n10 = n % 10, n100 = n % 100;
+      if (n10 === 1 && n100 !== 11) return one;
+      if (n10 >= 2 && n10 <= 4 && (n100 < 10 || n100 >= 20)) return few;
+      return many;
+    }
+
+    function update() {
+      const start = parseLocal(START_DATE);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const days = Math.round((today - start) / 86400000);
+
+      const numEl = document.getElementById('days');
+      const unitEl = document.getElementById('unit');
+
+      if (days < 0) {
+        numEl.textContent = '—';
+        unitEl.textContent = 'дата ещё не наступила';
+      } else {
+        numEl.textContent = String(days);
+        unitEl.textContent = plural(days, 'день', 'дня', 'дней');
+      }
+
+      document.getElementById('since').textContent = start.toLocaleDateString('ru-RU', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+    }
+
+    function scheduleMidnightRefresh() {
+      const now = new Date();
+      const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
+      setTimeout(() => { update(); scheduleMidnightRefresh(); }, next - now);
+    }
+
+    update();
+    scheduleMidnightRefresh();
+  </script>
 </body>
 </html>
