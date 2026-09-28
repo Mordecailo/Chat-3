@@ -2,7 +2,7 @@
 
 Статические страницы, выкладываемые на GitHub Pages.
 
-Адрес сайта: `https://mordecailo.github.io/Clean/`
+Адрес сайта: `https://mordecailo.github.io/clean/`
 
 ## Локальный запуск
 
