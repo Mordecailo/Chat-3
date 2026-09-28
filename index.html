@@ -31,10 +31,11 @@
     -webkit-font-smoothing: antialiased;
   }
   .label {
-    font-size: clamp(16px, 2vw, 24px);
+    font-size: clamp(12px, 1.8vw, 20px);
     font-weight: 600;
     color: var(--muted);
     margin-bottom: 8px;
+    padding: 0 8px;
     text-shadow: 0 1px 10px rgba(255, 255, 255, .6);
   }
   .value {
@@ -56,7 +57,7 @@
 </style>
 </head>
 <body>
-  <div class="label" id="label">Clean</div>
+  <div class="label" id="label">mordecailo.github.io/clean</div>
   <div class="value" id="value" role="button" tabindex="0">…</div>
 
   <script>
@@ -92,7 +93,7 @@
         valueEl.classList.add('is-date');
         valueEl.setAttribute('aria-label', 'Показать количество дней');
       } else {
-        labelEl.textContent = 'Clean';
+        labelEl.textContent = 'mordecailo.github.io/clean';
         const days = daysSince();
         valueEl.textContent = days < 0 ? '—' : String(days);
         valueEl.classList.remove('is-date');
