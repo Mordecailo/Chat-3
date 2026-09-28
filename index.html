@@ -35,25 +35,27 @@
     color: var(--muted);
     margin-bottom: 8px;
   }
-  .number {
+  .value {
     font-size: clamp(120px, 34vw, 460px);
     line-height: .88;
     font-weight: 700;
     letter-spacing: -.04em;
     font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: font-size .25s ease, letter-spacing .25s ease;
   }
-  .since {
-    margin-top: 32px;
-    font-size: clamp(12px, 1.4vw, 16px);
-    color: var(--muted);
+  .value.is-date {
+    font-size: clamp(30px, 8vw, 120px);
+    letter-spacing: -.02em;
+    line-height: 1.05;
   }
-  .since b { color: var(--fg); font-weight: 600; }
 </style>
 </head>
 <body>
   <div class="label">Clean</div>
-  <div class="number" id="days">…</div>
-  <div class="since">с <b id="since"></b></div>
+  <div class="value" id="value" role="button" tabindex="0">…</div>
 
   <script>
     /* =======================================================
@@ -66,32 +68,53 @@
       return new Date(y, m - 1, d);
     }
 
-    function update() {
-      const start = parseLocal(START_DATE);
+    const START = parseLocal(START_DATE);
+    const DATE_TEXT = START.toLocaleDateString('ru-RU', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    const valueEl = document.getElementById('value');
+    let showDate = false;
+
+    function daysSince() {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const days = Math.round((today - start) / 86400000);
-
-      const numEl = document.getElementById('days');
-
-      if (days < 0) {
-        numEl.textContent = '—';
-      } else {
-        numEl.textContent = String(days);
-      }
-
-      document.getElementById('since').textContent = start.toLocaleDateString('ru-RU', {
-        day: 'numeric', month: 'long', year: 'numeric'
-      });
+      return Math.round((today - START) / 86400000);
     }
+
+    function render() {
+      if (showDate) {
+        valueEl.textContent = DATE_TEXT;
+        valueEl.classList.add('is-date');
+        valueEl.setAttribute('aria-label', 'Показать количество дней');
+      } else {
+        const days = daysSince();
+        valueEl.textContent = days < 0 ? '—' : String(days);
+        valueEl.classList.remove('is-date');
+        valueEl.setAttribute('aria-label', 'Показать дату отсчёта');
+      }
+    }
+
+    function toggle() {
+      showDate = !showDate;
+      render();
+    }
+
+    valueEl.addEventListener('click', toggle);
+    valueEl.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle();
+      }
+    });
 
     function scheduleMidnightRefresh() {
       const now = new Date();
       const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
-      setTimeout(() => { update(); scheduleMidnightRefresh(); }, next - now);
+      setTimeout(function () { render(); scheduleMidnightRefresh(); }, next - now);
     }
 
-    update();
+    render();
     scheduleMidnightRefresh();
   </script>
 </body>
