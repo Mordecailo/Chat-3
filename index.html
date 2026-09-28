@@ -32,7 +32,6 @@
   }
   .label {
     font-size: clamp(16px, 2vw, 24px);
-    letter-spacing: .12em;
     font-weight: 600;
     color: var(--muted);
     margin-bottom: 8px;
@@ -57,7 +56,7 @@
 </style>
 </head>
 <body>
-  <div class="label">Clean</div>
+  <div class="label" id="label">Clean</div>
   <div class="value" id="value" role="button" tabindex="0">…</div>
 
   <script>
@@ -77,6 +76,7 @@
     });
 
     const valueEl = document.getElementById('value');
+    const labelEl = document.getElementById('label');
     let showDate = false;
 
     function daysSince() {
@@ -87,10 +87,12 @@
 
     function render() {
       if (showDate) {
+        labelEl.textContent = 'Since';
         valueEl.textContent = DATE_TEXT;
         valueEl.classList.add('is-date');
         valueEl.setAttribute('aria-label', 'Показать количество дней');
       } else {
+        labelEl.textContent = 'Clean';
         const days = daysSince();
         valueEl.textContent = days < 0 ? '—' : String(days);
         valueEl.classList.remove('is-date');
